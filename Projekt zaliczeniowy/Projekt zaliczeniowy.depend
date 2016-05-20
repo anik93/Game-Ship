@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1463740423 source:c:\users\student1\desktop\projekt zaliczeniowy\statki.cpp
+1463744721 source:c:\users\student1\desktop\projekt zaliczeniowy\statki.cpp
 	<SDL/SDL.h>
 	<GL/gl.h>
 	<GL/glu.h>

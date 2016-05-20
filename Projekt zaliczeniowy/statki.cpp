@@ -16,7 +16,7 @@ bool wygra1 = false;
 bool wygra2 = false;
 
 enum StanGry{
-    puste, statek1, statek2, trafiony1, trafiony2, nieTrafiony1, nieTrafiony2, podswietl
+    puste, statek, trafiony, nieTrafiony, podswietl
 };
 StanGry stanPlayer1[10][10];
 StanGry stanPlayer2[10][10];
@@ -84,61 +84,51 @@ void podswietlTo(float mx, float my){
         wy += 50;
     }
 }
-bool zlyStatek = true;
 
 void klik(float mx, float my){
     int wx = 115;
     int wy = -5;
     bool flaga = false;
 
+
     for(int i=0; i<10; i++){
 
         for(int j=0; j<10; j++){
 
-            for(int k=0; k<10; k++){
-                for(int l=0; l<10; l++){
-                    if(stanPlayer1[k][l]==podswietl)
-                        stanPlayer1[k][l]=puste;
-                    if(stanPlayer2[k][l]==podswietl)
-                        stanPlayer2[k][l]=puste;
-                }
-            }
-
             if(mx>wx && mx<wx+53 && my>wy && my<wy+53){
-                if(stanPlayer1[i][j]==statek1 && player && !czyGra){
+                if(stanPlayer1[i][j]==statek && player && !czyGra){
                     zlyStatek1=true;
                     break;
-                } else if (stanPlayer2[i][j]==statek2 && !player && !czyGra){
+                } else if (stanPlayer2[i][j]==statek && !player && !czyGra){
                     zlyStatek2=true;
                     break;
                 }
                 flaga=true;
-                if(stanPlayer1[i][j]==puste && player && !czyGra && stanPlayer1[i][j]!=statek1){
-                    stanPlayer1[i][j]=statek1;
+                if(stanPlayer1[i][j]==puste && player && !czyGra && stanPlayer1[i][j]!=statek){
+                    stanPlayer1[i][j]=statek;
                     licznikPlayer1++;
                     zlyStatek1=false;
                     break;
-                } else if(stanPlayer2[i][j]==statek2 && player && czyGra){
-                    stanPlayer2[i][j]=trafiony1;
+                } else if(stanPlayer2[i][j]==statek && player && czyGra){
+                    stanPlayer2[i][j]=trafiony;
                     break;
                 } else if(stanPlayer2[i][j]==puste && player && czyGra){
-                    stanPlayer2[i][j]=nieTrafiony1;
+                    stanPlayer2[i][j]=nieTrafiony;
                     break;
 
-                } else if(stanPlayer2[i][j]==puste && !player && !czyGra && stanPlayer2[i][j]!=statek2){
-                    stanPlayer2[i][j]=statek2;
+                } else if(stanPlayer2[i][j]==puste && !player && !czyGra && stanPlayer2[i][j]!=statek){
+                    stanPlayer2[i][j]=statek;
                     licznikPlayer2++;
                     zlyStatek2=false;
                     break;
-                } else if(stanPlayer1[i][j]==statek1 && !player && czyGra){
-                    stanPlayer2[i][j]=trafiony1;
+                } else if(stanPlayer1[i][j]==statek && !player && czyGra){
+                    stanPlayer1[i][j]=trafiony;
                     break;
-                } else if(stanPlayer2[i][j]==puste && !player && czyGra){
-                    stanPlayer2[i][j]=nieTrafiony1;
+                } else if(stanPlayer1[i][j]==puste && !player && czyGra){
+                    stanPlayer1[i][j]=nieTrafiony;
                     break;
                 }
-
-                //break;
+                break;
             }
             wx += 50;
         }
@@ -153,44 +143,71 @@ void display(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glTranslatef(0,0,-13);
-
+    bool flaga = false;
     float ky = 4.9;
     float kx =  -4;
+    int licznikWygral1=0;
+    int licznikWygral2=0;
+    for(int i=0; i<10; i++){
+        for(int j=0; j<10; j++){
+            if(stanPlayer1[i][j]==trafiony){
+                licznikWygral2++;
+            }
+            if(stanPlayer2[i][j]==trafiony){
+                licznikWygral1++;
+            }
+        }
+    }
+
     for(int i = 0; i<10; i++){
         for(int j = 0; j<10; j++){
+
             glPushMatrix();
             glTranslatef(kx,ky,0);
             //player 1
             if(player){
-                if(stanPlayer1[i][j]==puste){
-                    glColor3f(1.0,0.5,0.5);
-                } else if(stanPlayer1[i][j]==podswietl) {
-                    glColor3f(0.0,0.5,0.5);
-                } else if(stanPlayer1[i][j]==statek1 && licznikPlayer1<10 && !czyGra){
-                    glColor3f(0.5,0.5,0.5);
-                } else if(stanPlayer2[i][j]==trafiony1 && czyGra){
-                    glColor3f(0.5,1.0,1.0);
-                } else if(stanPlayer2[i][j]==nieTrafiony1 && czyGra){
-                    glColor3f(1.0,0.5,1.0);
+                if(!czyGra){
+                    if(stanPlayer1[i][j]==puste){
+                        glColor3f(1.0,0.5,0.5);
+                    }else if(stanPlayer1[i][j]==podswietl){
+                        glColor3f(0.0,0.5,0.5);
+                    }else if(stanPlayer1[i][j]==statek){
+                        glColor3f(0.5,0.5,0.5);
+                    }
+                }else{
+                    if(stanPlayer2[i][j]==trafiony){
+                        glColor3f(1,0,0);
+                    }else if(stanPlayer2[i][j]==nieTrafiony){
+                        glColor3f(1,1,1);
+                    }else if(stanPlayer2[i][j]==puste || stanPlayer2[i][j]==statek){
+                        glColor3f(1.0,0.5,0.5);
+                    }
                 }
             //player 2
             } else {
-                if(stanPlayer2[i][j]==puste){
-                    glColor3f(1.0,0.5,0.5);
-                } else if(stanPlayer2[i][j]==podswietl) {
-                    glColor3f(0.0,0.5,0.5);
-                } else if(stanPlayer2[i][j]==statek2 && licznikPlayer2<10 && !czyGra){
-                    glColor3f(0.5,0.4,0.2);
-                } else if(stanPlayer1[i][j]==trafiony2 && czyGra){
-                    glColor3f(1.0,0.5,1.0);
-                } else if(stanPlayer1[i][j]==nieTrafiony2 && czyGra){
-                    glColor3f(0.7,0.5,1.0);
+                if(!czyGra){
+                    if(stanPlayer2[i][j]==puste){
+                        glColor3f(1.0,0.5,0.5);
+                    }else if(stanPlayer2[i][j]==podswietl){
+                        glColor3f(0.0,0.5,0.5);
+                    }else if(stanPlayer2[i][j]==statek){
+                        glColor3f(0.5,0.4,0.2);
+                    }
+                }else{
+                    if(stanPlayer1[i][j]==trafiony){
+                        glColor3f(1,0,0);
+                    }else if(stanPlayer1[i][j]==nieTrafiony){
+                        glColor3f(1,1,1);
+                    }else if(stanPlayer1[i][j]==puste || stanPlayer1[i][j]==statek){
+                        glColor3f(1.0,0.5,0.5);
+                    }
                 }
             }
-            if(wygra1)
-                glColor3f(0.5,0.5,0.5);
-            else if(wygra2)
-                glColor3f(0.5,0.4,0.2);
+
+            if(licznikWygral1==10)
+                glColor3f(0.0,0.0,0.0);
+            else if(licznikWygral2==10)
+                glColor3f(0.0,0.0,0.0);
             kawardat();
             glPopMatrix();
             kx += 1.1;
@@ -240,10 +257,15 @@ int main(int argc, char* args[])
                 case SDL_MOUSEBUTTONDOWN:
                         if (myevent.button.button==SDL_BUTTON_LEFT){
                             klik(mx,my);
-                            togglePlayer();
+                            if(!zlyStatek1 || !zlyStatek2){
+                                togglePlayer();
+                                zlyStatek1=true;
+                                zlyStatek2=true;
+                            }
+                            if(czyGra){
+                                togglePlayer();
+                            }
                         }
-
-
                         break;
             }
         }
