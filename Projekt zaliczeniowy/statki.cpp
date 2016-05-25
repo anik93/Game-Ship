@@ -6,7 +6,7 @@
 float angle=0.0;
 int mx;
 int my;
-bool player = false;
+bool player = true;
 int licznikPlayer1 = 0;
 int licznikPlayer2 = 0;
 bool czyGra = false;
@@ -49,6 +49,7 @@ void kawardat(){
 }
 
 void podswietlTo(float mx, float my){
+    printf(" %s","kk");
     int wx = 115;
     int wy = -5;
     bool flaga = false;
@@ -143,7 +144,6 @@ void display(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glTranslatef(0,0,-13);
-    bool flaga = false;
     float ky = 4.9;
     float kx =  -4;
     int licznikWygral1=0;
@@ -204,18 +204,20 @@ void display(){
                 }
             }
 
-            if(licznikWygral1==10)
+            if(licznikWygral1==10){
                 glColor3f(0.0,0.0,0.0);
-            else if(licznikWygral2==10)
+            } else if(licznikWygral2==10){
                 glColor3f(0.0,0.0,0.0);
+            }
             kawardat();
             glPopMatrix();
             kx += 1.1;
         }
         kx = -4;
         ky -=1.1;
-        if(licznikPlayer1==10 && licznikPlayer2==10)
+        if(licznikPlayer1==10 && licznikPlayer2==10){
             czyGra=true;
+        }
     }
 }
 
