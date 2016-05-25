@@ -3,23 +3,24 @@
 #include<GL/gl.h>
 #include<GL/glu.h>
 
-float angle=0.0;
-int mx;
-int my;
-bool player = true;
+float mx;
+float my;
+bool player = false;
 int licznikPlayer1 = 0;
 int licznikPlayer2 = 0;
 bool czyGra = false;
-bool zlyStatek1 = true;
-bool zlyStatek2 = true;
 bool wygra1 = false;
 bool wygra2 = false;
+bool zlyStatek = false;
+bool koniec = false;
 
 enum StanGry{
     puste, statek, trafiony, nieTrafiony, podswietl
 };
+
 StanGry stanPlayer1[10][10];
 StanGry stanPlayer2[10][10];
+
 void init(){
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glMatrixMode(GL_PROJECTION);
@@ -49,9 +50,8 @@ void kawardat(){
 }
 
 void podswietlTo(float mx, float my){
-    printf(" %s","kk");
-    int wx = 115;
-    int wy = -5;
+    float wx = 115;
+    float wy = -5;
     bool flaga = false;
 
     for(int i=0; i<10; i++){
@@ -87,49 +87,48 @@ void podswietlTo(float mx, float my){
 }
 
 void klik(float mx, float my){
-    int wx = 115;
-    int wy = -5;
+    float wx = 115;
+    float wy = -5;
     bool flaga = false;
-
 
     for(int i=0; i<10; i++){
 
         for(int j=0; j<10; j++){
 
             if(mx>wx && mx<wx+53 && my>wy && my<wy+53){
-                if(stanPlayer1[i][j]==statek && player && !czyGra){
-                    zlyStatek1=true;
-                    break;
-                } else if (stanPlayer2[i][j]==statek && !player && !czyGra){
-                    zlyStatek2=true;
-                    break;
+                if(player){
+                    if(czyGra){
+                        if(stanPlayer2[i][j]==statek){
+                            stanPlayer2[i][j]=trafiony;
+                        } else if(stanPlayer2[i][j]==puste || stanPlayer2[i][j]==podswietl){
+                            stanPlayer2[i][j]=nieTrafiony;
+                        }
+                    } else {
+                        if(stanPlayer1[i][j]==puste || stanPlayer1[i][j]==podswietl){
+                            licznikPlayer1++;
+                            stanPlayer1[i][j]=statek;
+                            zlyStatek=false;
+                        } else if(stanPlayer1[i][j]==statek){
+                            zlyStatek=true;
+                        }
+                    }
+                } else {
+                    if(czyGra){
+                        if(stanPlayer1[i][j]==statek){
+                            stanPlayer1[i][j]=trafiony;
+                        } else if(stanPlayer1[i][j]==puste || stanPlayer1[i][j]==podswietl){
+                            stanPlayer1[i][j]=nieTrafiony;
+                        }
+                    } else {
+                        if(stanPlayer2[i][j]==puste || stanPlayer2[i][j]==podswietl){
+                            licznikPlayer2++;
+                            stanPlayer2[i][j]=statek;
+                            zlyStatek=false;
+                        } else if(stanPlayer2[i][j]==statek){
+                            zlyStatek=true;
+                        }
+                    }
                 }
-                flaga=true;
-                if(stanPlayer1[i][j]==puste && player && !czyGra && stanPlayer1[i][j]!=statek){
-                    stanPlayer1[i][j]=statek;
-                    licznikPlayer1++;
-                    zlyStatek1=false;
-                    break;
-                } else if(stanPlayer2[i][j]==statek && player && czyGra){
-                    stanPlayer2[i][j]=trafiony;
-                    break;
-                } else if(stanPlayer2[i][j]==puste && player && czyGra){
-                    stanPlayer2[i][j]=nieTrafiony;
-                    break;
-
-                } else if(stanPlayer2[i][j]==puste && !player && !czyGra && stanPlayer2[i][j]!=statek){
-                    stanPlayer2[i][j]=statek;
-                    licznikPlayer2++;
-                    zlyStatek2=false;
-                    break;
-                } else if(stanPlayer1[i][j]==statek && !player && czyGra){
-                    stanPlayer1[i][j]=trafiony;
-                    break;
-                } else if(stanPlayer1[i][j]==puste && !player && czyGra){
-                    stanPlayer1[i][j]=nieTrafiony;
-                    break;
-                }
-                break;
             }
             wx += 50;
         }
@@ -144,6 +143,7 @@ void display(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glTranslatef(0,0,-13);
+    //bool flaga = false;
     float ky = 4.9;
     float kx =  -4;
     int licznikWygral1=0;
@@ -215,8 +215,57 @@ void display(){
         }
         kx = -4;
         ky -=1.1;
-        if(licznikPlayer1==10 && licznikPlayer2==10){
+        if(player){
+            glPushMatrix();
+            glTranslatef(-5.2,4.9,0);
+            glScalef(1,5,0);
+            glColor3f(1,1,1);
+            kawardat();
+            glPopMatrix();
+        } else {
+           glPushMatrix();
+           glTranslatef(-5.2,4.9,0);
+           glColor3f(1,1,1);
+           glScalef(1,5,0);
+           kawardat();
+           glPopMatrix();
+
+           glPushMatrix();
+           glTranslatef(-6.5,4.9,0);
+           glColor3f(1,1,1);
+           glScalef(1,5,0);
+           kawardat();
+           glPopMatrix();
+        }
+
+        if(licznikPlayer1==10 && licznikPlayer2==10)
             czyGra=true;
+
+        if(licznikWygral1==10){
+            koniec=true;
+            glPushMatrix();
+            glTranslatef(-5.2,4.9,0);
+            glScalef(1,2,1);
+            glColor3f(1,1,1);
+            glScalef(1,5,0);
+            kawardat();
+            glPopMatrix();
+            player=true;
+        } else if(licznikWygral2==10){
+            koniec=true;
+            glPushMatrix();
+            glTranslatef(-5.2,4.9,0);
+            glColor3f(1,1,1);
+            glScalef(1,5,0);
+            kawardat();
+            glPopMatrix();
+            player=false;
+            glPushMatrix();
+            glTranslatef(-6.5,4.9,0);
+            glColor3f(1,1,1);
+            glScalef(1,5,0);
+            kawardat();
+            glPopMatrix();
         }
     }
 }
@@ -245,26 +294,43 @@ int main(int argc, char* args[])
                 break;
 
                 case SDL_KEYDOWN:
-                    if (myevent.key.keysym.sym==SDLK_SPACE)
+                    if (myevent.key.keysym.sym==SDLK_r){
+                        for(int i = 0; i<10; i++){
+                            for(int j = 0; j<10; j++){
+                                stanPlayer1[i][j]=puste;
+                                stanPlayer2[i][j]=puste;
+                            }
+                        }
+                        player = false;
+                        licznikPlayer1 = 0;
+                        licznikPlayer2 = 0;
+                        czyGra = false;
+                        wygra1 = false;
+                        wygra2 = false;
+                        zlyStatek = false;
+                        koniec = false;
+                    }
 
                         break;
 
                 case SDL_MOUSEMOTION:
-                        mx=myevent.button.x;
-                        my=myevent.button.y;
+                        mx=(float)myevent.button.x;
+                        my=(float)myevent.button.y;
 
                         podswietlTo(mx,my);
                         break;
 
                 case SDL_MOUSEBUTTONDOWN:
                         if (myevent.button.button==SDL_BUTTON_LEFT){
-                            klik(mx,my);
-                            if(!zlyStatek1 || !zlyStatek2){
+                            if(!koniec)
+                                klik(mx,my);
+                            //if(!zlyStatek1 || !zlyStatek2){
+                            if(!zlyStatek && !czyGra){
                                 togglePlayer();
-                                zlyStatek1=true;
-                                zlyStatek2=true;
+                                //zlyStatek1=true;
+                                //zlyStatek2=true;
                             }
-                            if(czyGra){
+                            if(czyGra && !koniec){
                                 togglePlayer();
                             }
                         }
