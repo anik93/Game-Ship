@@ -89,7 +89,6 @@ void podswietlTo(float mx, float my){
 void klik(float mx, float my){
     float wx = 115;
     float wy = -5;
-    bool flaga = false;
 
     for(int i=0; i<10; i++){
 
@@ -132,8 +131,6 @@ void klik(float mx, float my){
             }
             wx += 50;
         }
-        if(flaga)
-            break;
         wx = 115;
         wy += 50;
     }
@@ -143,11 +140,11 @@ void display(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glTranslatef(0,0,-13);
-    //bool flaga = false;
     float ky = 4.9;
     float kx =  -4;
     int licznikWygral1=0;
     int licznikWygral2=0;
+	
     for(int i=0; i<10; i++){
         for(int j=0; j<10; j++){
             if(stanPlayer1[i][j]==trafiony){
@@ -164,7 +161,7 @@ void display(){
 
             glPushMatrix();
             glTranslatef(kx,ky,0);
-            //player 1
+			
             if(player){
                 if(!czyGra){
                     if(stanPlayer1[i][j]==puste){
@@ -183,7 +180,6 @@ void display(){
                         glColor3f(1.0,0.5,0.5);
                     }
                 }
-            //player 2
             } else {
                 if(!czyGra){
                     if(stanPlayer2[i][j]==puste){
@@ -324,11 +320,8 @@ int main(int argc, char* args[])
                         if (myevent.button.button==SDL_BUTTON_LEFT){
                             if(!koniec)
                                 klik(mx,my);
-                            //if(!zlyStatek1 || !zlyStatek2){
                             if(!zlyStatek && !czyGra){
                                 togglePlayer();
-                                //zlyStatek1=true;
-                                //zlyStatek2=true;
                             }
                             if(czyGra && !koniec){
                                 togglePlayer();
